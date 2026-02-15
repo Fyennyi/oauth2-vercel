@@ -433,26 +433,6 @@ function processUser(user: VercelUser): void {
 | JWKS signature verification | ✅ Automatic | ❌ Not shown |
 | Token expiration | ✅ Built-in check | ⚠️ Manual |
 
-## Advantages of Each Approach
-
-### PHP Library Advantages
-
-✅ **Less boilerplate** - Significantly less code to write
-✅ **Automatic security** - PKCE, state, nonce, JWKS all handled
-✅ **Reusable** - Works with any PHP framework
-✅ **Type-safe** - ResourceOwner interface and exceptions
-✅ **Battle-tested** - Based on league/oauth2-client standard
-✅ **Easy maintenance** - Update library for security fixes
-
-### Next.js Manual Advantages
-
-✅ **Full control** - Customize every aspect
-✅ **No dependencies** - Fewer packages to manage
-✅ **Framework integration** - Native Next.js patterns
-✅ **Transparency** - See exactly what's happening
-✅ **Edge compatible** - Can run on Edge Runtime
-✅ **Type safety** - TypeScript compile-time checking
-
 ## Migration Example
 
 ### From Next.js to PHP
