@@ -90,15 +90,15 @@ $provider = new \Fyennyi\OAuth2\Client\Provider\Vercel([
 2. Manually configure endpoints:
    ```php
    $provider = new \Fyennyi\OAuth2\Client\Provider\Vercel([
-       'clientId'               => 'your-client-id',
-       'clientSecret'           => 'your-client-secret',
-       'redirectUri'            => 'https://yourapp.com/callback',
-       'baseAuthorizationUrl'   => 'https://vercel.com/oauth/authorize',
-       'baseAccessTokenUrl'     => 'https://api.vercel.com/login/oauth/token',
+       'clientId'                => 'your-client-id',
+       'clientSecret'            => 'your-client-secret',
+       'redirectUri'             => 'https://yourapp.com/callback',
+       'baseAuthorizationUrl'    => 'https://vercel.com/oauth/authorize',
+       'baseAccessTokenUrl'      => 'https://api.vercel.com/login/oauth/token',
        'resourceOwnerDetailsUrl' => 'https://api.vercel.com/login/oauth/userinfo',
-       'introspectUrl'          => 'https://api.vercel.com/login/oauth/token/introspect',
-       'revokeUrl'              => 'https://api.vercel.com/login/oauth/token/revoke',
-       'jwksUrl'                => 'https://vercel.com/.well-known/jwks',
+       'introspectUrl'           => 'https://api.vercel.com/login/oauth/token/introspect',
+       'revokeUrl'               => 'https://api.vercel.com/login/oauth/token/revoke',
+       'jwksUrl'                 => 'https://vercel.com/.well-known/jwks',
    ]);
    ```
 
