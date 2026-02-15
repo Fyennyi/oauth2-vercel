@@ -331,4 +331,4 @@ Contributors will be recognized in:
 - Release notes
 - GitHub's contributors page
 
-Thank you for contributing! 🎉
+Thank you for contributing!
