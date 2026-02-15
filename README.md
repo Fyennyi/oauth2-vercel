@@ -283,18 +283,6 @@ Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for det
 
 This library is licensed under the CSSM Unlimited License v2.0. See the [LICENSE](LICENSE) file for details.
 
-## Credits
-
-- **Author**: Serhii Cherneha
-- **Vendor**: Fyennyi
-- **Based on**: [league/oauth2-client](https://github.com/thephpleague/oauth2-client)
-
-## Support
-
-- **Issues**: [GitHub Issues](https://github.com/fyennyi/oauth2-vercel/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/fyennyi/oauth2-vercel/discussions)
-- **Email**: chernegasergiy3@gmail.com
-
 ## Related Projects
 
 - [league/oauth2-client](https://github.com/thephpleague/oauth2-client) - OAuth 2.0 Client Library
