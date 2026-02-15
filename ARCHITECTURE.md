@@ -439,8 +439,8 @@ graph TB
         DevSession[File-based Sessions]
     end
     
-    subgraph "Staging"
-        Staging[staging.yourapp.com]
+    subgraph "Staging Environment"
+        StagingApp[staging.yourapp.com]
         StagingSession[Redis Sessions]
         StagingDB[(Session DB)]
     end
@@ -454,7 +454,7 @@ graph TB
     end
     
     Dev --> DevSession
-    Staging --> StagingSession
+    StagingApp --> StagingSession
     StagingSession --> StagingDB
     
     LoadBalancer --> Prod1
