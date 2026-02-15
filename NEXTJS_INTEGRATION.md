@@ -411,30 +411,29 @@ echo json_encode([
 
 ```
 project/
-├── frontend/              # Next.js application
-│   ├── app/
-│   │   ├── api/
-│   │   │   └── auth/
-│   │   │       ├── status/
-│   │   │       └── logout/
-│   │   ├── components/
-│   │   │   └── SignInButton.tsx
-│   │   ├── dashboard/
-│   │   │   └── page.tsx
-│   │   └── layout.tsx
-│   └── package.json
-│
-└── backend/               # PHP application
-    ├── vendor/
-    ├── auth/
-    │   ├── login.php
-    │   ├── callback.php
-    │   └── logout.php
-    ├── api/
-    │   ├── user.php
-    │   └── auth/
-    │       └── status.php
-    └── composer.json
++-- frontend/                       # Next.js application
+|   +-- app/
+|   |   +-- api/
+|   |   |   \-- auth/
+|   |   |       +-- status/
+|   |   |       \-- logout/
+|   |   +-- components/
+|   |   |   \-- SignInButton.tsx
+|   |   +-- dashboard/
+|   |   |   \-- page.tsx
+|   |   \-- layout.tsx
+|   \-- package.json
+\-- backend/                        # PHP application
+    +-- vendor/
+    +-- auth/
+    |   +-- login.php
+    |   +-- callback.php
+    |   \-- logout.php
+    +-- api/
+    |   +-- user.php
+    |   \-- auth/
+    |       \-- status.php
+    \-- composer.json
 ```
 
 ### Dashboard Component
