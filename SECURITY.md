@@ -227,7 +227,7 @@ This library follows:
 
 For security concerns: chernegasergiy3@gmail.com
 
-For general issues: https://github.com/fyennyi/oauth2-vercel/issues
+For general issues: https://github.com/Fyennyi/oauth2-vercel/issues
 
 ## Hall of Fame
 
