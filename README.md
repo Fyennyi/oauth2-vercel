@@ -3,7 +3,6 @@
 [![Latest Stable Version](https://img.shields.io/packagist/v/fyennyi/oauth2-vercel.svg?label=Packagist&logo=packagist)](https://packagist.org/packages/fyennyi/oauth2-vercel)
 [![Total Downloads](https://img.shields.io/packagist/dt/fyennyi/oauth2-vercel.svg?label=Downloads&logo=packagist)](https://packagist.org/packages/fyennyi/oauth2-vercel)
 [![License](https://img.shields.io/packagist/l/fyennyi/oauth2-vercel.svg?label=Licence&logo=open-source-initiative)](https://packagist.org/packages/fyennyi/oauth2-vercel)
-[![PHP Version](https://img.shields.io/packagist/php-v/fyennyi/oauth2-vercel.svg)](https://packagist.org/packages/fyennyi/oauth2-vercel)
 
 This package provides Vercel OAuth 2.0 support for the PHP League's [OAuth 2.0 Client](https://github.com/thephpleague/oauth2-client).
 
