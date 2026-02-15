@@ -1,6 +1,6 @@
 {
     "name": "fyennyi/oauth2-vercel",
-    "description": "Vercel OAuth 2.0 Client Provider for The PHP League OAuth2-Client",
+    "description": "Vercel OAuth 2.0 Client Provider for The PHP League OAuth2-Client.",
     "license": "LicenseRef-CSSM-Unlimited-2.0",
     "keywords": [
         "oauth",
