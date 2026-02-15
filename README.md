@@ -9,12 +9,12 @@ This package provides Vercel OAuth 2.0 support for the PHP League's [OAuth 2.0 C
 
 ## Features
 
-- 🔐 **Full OAuth 2.0 & OIDC Support** - Implements authorization code flow with PKCE
-- 🎯 **Automatic Endpoint Discovery** - Configures endpoints from Vercel's OIDC discovery document
-- ✅ **ID Token Validation** - Cryptographically validates ID tokens using JWKS
-- 🔍 **Token Introspection** - Check token validity and metadata
-- 🚫 **Token Revocation** - Invalidate tokens when needed
-- 📦 **Easy Integration** - Works seamlessly with `league/oauth2-client`
+- **Full OAuth 2.0 & OIDC Support**: Implements authorization code flow with PKCE.
+- **Automatic Endpoint Discovery**: Configures endpoints from Vercel's OIDC discovery document.
+- **ID Token Validation**: Cryptographically validates ID tokens using JWKS.
+- **Token Introspection**: Check token validity and metadata.
+- **Token Revocation**: Invalidate tokens when needed.
+- **Easy Integration**: Works seamlessly with `league/oauth2-client`.
 
 ## Installation
 
