@@ -26,10 +26,10 @@ composer require fyennyi/oauth2-vercel
 
 ### Requirements
 
-- PHP 7.4 or higher
+- PHP 8.0 or higher
 - `league/oauth2-client` ^2.0
 - `guzzlehttp/guzzle` ^7.0
-- `firebase/php-jwt` ^6.0
+- `firebase/php-jwt` ^7.0
 
 ## Quick Start
 
