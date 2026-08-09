@@ -179,7 +179,7 @@ class Vercel extends AbstractProvider
      * Requests an access token and validates the ID token if present.
      *
      * @param mixed $grant The grant type
-     * @param array $options Additional options
+     * @param array<string, mixed> $options Additional options
      * @return AccessTokenInterface The access token with validated ID token claims
      * 
      * @throws IdentityProviderException If ID token validation fails
@@ -191,9 +191,10 @@ class Vercel extends AbstractProvider
         // Validate ID token if present
         $idToken = $accessToken->getValues()['id_token'] ?? null;
 
-        if ($idToken) {
+        if (is_string($idToken) && $idToken !== '') {
             $nonce = $_SESSION['oauth2nonce'] ?? null;
             unset($_SESSION['oauth2nonce']);
+            $nonce = is_string($nonce) ? $nonce : null;
 
             $validatedClaims = $this->getValidatedClaims($idToken, $nonce);
             $values = array_merge($accessToken->getValues(), ['id_token_claims' => $validatedClaims]);
@@ -208,7 +209,7 @@ class Vercel extends AbstractProvider
      *
      * @param string $idToken The ID token JWT
      * @param string|null $expectedNonce The expected nonce value
-     * @return array The decoded and validated claims
+     * @return array<string, mixed> The decoded and validated claims
      * 
      * @throws IdentityProviderException If validation fails
      */
@@ -226,7 +227,8 @@ class Vercel extends AbstractProvider
 
         // Validate audience
         $aud = is_array($decoded->aud) ? $decoded->aud : [$decoded->aud];
-        if (!in_array($this->options['clientId'], $aud, true)) {
+        $clientId = $this->options['clientId'] ?? null;
+        if (!in_array($clientId, $aud, true)) {
             throw new IdentityProviderException('Invalid audience claim in ID token', 0, $idToken);
         }
 
