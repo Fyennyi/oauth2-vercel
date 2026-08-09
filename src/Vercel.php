@@ -382,6 +382,8 @@ class Vercel extends AbstractProvider
 
     /**
      * {@inheritdoc}
+     *
+     * @return array<int, string>
      */
     protected function getDefaultScopes(): array
     {
@@ -398,18 +400,23 @@ class Vercel extends AbstractProvider
 
     /**
      * {@inheritdoc}
+     *
+     * @param array<string, mixed>|string $data
      */
     protected function checkResponse(ResponseInterface $response, $data): void
     {
-        if (!empty($data['error'])) {
+        if (is_array($data) && !empty($data['error'])) {
             $code = $response->getStatusCode();
             $error = $data['error_description'] ?? $data['error'];
+            $error = is_string($error) ? $error : 'An unknown error occurred';
             throw new IdentityProviderException($error, $code, $data);
         }
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @param array<string, mixed> $response
      */
     protected function createResourceOwner(array $response, AccessToken $token): VercelUser
     {
