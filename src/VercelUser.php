@@ -13,18 +13,31 @@ use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 class VercelUser implements ResourceOwnerInterface
 {
     /**
-     * @var array Raw response data from the provider
+     * @var array<string, mixed> Raw response data from the provider
      */
     protected array $response;
 
     /**
      * Creates a new Vercel user.
      *
-     * @param array $response The raw response data
+     * @param array<string, mixed> $response The raw response data
      */
     public function __construct(array $response)
     {
         $this->response = $response;
+    }
+
+    /**
+     * Extracts a string value from the response data, if present.
+     *
+     * @param string $key The field name to extract
+     * @return string|null The string value, or null if missing/not a string
+     */
+    private function getStringValue(string $key): ?string
+    {
+        $value = $this->response[$key] ?? null;
+
+        return is_string($value) ? $value : null;
     }
 
     /**
