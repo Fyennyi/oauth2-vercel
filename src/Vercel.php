@@ -287,15 +287,19 @@ class Vercel extends AbstractProvider
      */
     public function getBaseAuthorizationUrl(): string
     {
-        return $this->baseAuthorizationUrl;
+        return $this->baseAuthorizationUrl
+            ?? throw new \RuntimeException("The 'baseAuthorizationUrl' option was not configured.");
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @param array<string, mixed> $params
      */
     public function getBaseAccessTokenUrl(array $params): string
     {
-        return $this->baseAccessTokenUrl;
+        return $this->baseAccessTokenUrl
+            ?? throw new \RuntimeException("The 'baseAccessTokenUrl' option was not configured.");
     }
 
     /**
@@ -303,7 +307,8 @@ class Vercel extends AbstractProvider
      */
     public function getResourceOwnerDetailsUrl(AccessToken $token): string
     {
-        return $this->resourceOwnerDetailsUrl;
+        return $this->resourceOwnerDetailsUrl
+            ?? throw new \RuntimeException("The 'resourceOwnerDetailsUrl' option was not configured.");
     }
 
     /**
