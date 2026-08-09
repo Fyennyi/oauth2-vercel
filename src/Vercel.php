@@ -59,6 +59,11 @@ class Vercel extends AbstractProvider
     protected array $options = [];
 
     /**
+     * @var string The OIDC issuer URL
+     */
+    protected string $issuer = 'https://vercel.com';
+
+    /**
      * Initializes the Vercel provider.
      *
      * @param array $options Configuration options including:
@@ -83,12 +88,14 @@ class Vercel extends AbstractProvider
         $this->options = array_merge($this->options, $options);
 
         // Set default issuer if not provided
-        if (empty($this->options['issuer'])) {
-            $this->options['issuer'] = 'https://vercel.com';
+        $issuer = $this->options['issuer'] ?? null;
+        if (is_string($issuer) && $issuer !== '') {
+            $this->issuer = $issuer;
         }
+        $this->options['issuer'] = $this->issuer;
 
         // Discover endpoints from issuer
-        $this->discoverEndpoints($this->options['issuer']);
+        $this->discoverEndpoints($this->issuer);
 
         // Allow manual override of endpoints
         $urlOptions = [
@@ -243,7 +250,7 @@ class Vercel extends AbstractProvider
      */
     private function getConfiguredIssuer(): string
     {
-        return $this->options['issuer'];
+        return $this->issuer;
     }
 
     /**
