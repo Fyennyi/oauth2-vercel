@@ -242,25 +242,33 @@ class Vercel extends AbstractProvider
             }
         }
 
+        /** @var array<string, mixed> */
         return (array) $decoded;
     }
 
     /**
      * Fetches the JSON Web Key Set (JWKS) from Vercel.
      *
-     * @return array The JWKS data
+     * @return array<string, mixed> The JWKS data
      * 
      * @throws \RuntimeException If fetching fails
      */
     private function fetchJwks(): array
     {
-        $response = $this->getHttpClient()->get($this->jwksUrl);
+        $jwksUrl = $this->jwksUrl ?? throw new \RuntimeException("The 'jwksUrl' option was not configured.");
+
+        $response = $this->getHttpClient()->request('GET', $jwksUrl);
         $data = json_decode((string) $response->getBody(), true);
-        
+
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new \RuntimeException('Failed to parse JWKS: ' . json_last_error_msg());
         }
 
+        if (!is_array($data)) {
+            throw new \RuntimeException('Unexpected JWKS response format.');
+        }
+
+        /** @var array<string, mixed> $data */
         return $data;
     }
 
