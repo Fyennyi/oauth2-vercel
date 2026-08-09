@@ -47,7 +47,7 @@ class VercelUser implements ResourceOwnerInterface
      */
     public function getId(): ?string
     {
-        return $this->response['sub'] ?? null;
+        return $this->getStringValue('sub');
     }
 
     /**
@@ -57,7 +57,7 @@ class VercelUser implements ResourceOwnerInterface
      */
     public function getEmail(): ?string
     {
-        return $this->response['email'] ?? null;
+        return $this->getStringValue('email');
     }
 
     /**
@@ -67,7 +67,9 @@ class VercelUser implements ResourceOwnerInterface
      */
     public function isEmailVerified(): ?bool
     {
-        return $this->response['email_verified'] ?? null;
+        $value = $this->response['email_verified'] ?? null;
+
+        return is_bool($value) ? $value : null;
     }
 
     /**
@@ -77,7 +79,7 @@ class VercelUser implements ResourceOwnerInterface
      */
     public function getName(): ?string
     {
-        return $this->response['name'] ?? null;
+        return $this->getStringValue('name');
     }
 
     /**
@@ -87,7 +89,7 @@ class VercelUser implements ResourceOwnerInterface
      */
     public function getPreferredUsername(): ?string
     {
-        return $this->response['preferred_username'] ?? null;
+        return $this->getStringValue('preferred_username');
     }
 
     /**
@@ -97,13 +99,13 @@ class VercelUser implements ResourceOwnerInterface
      */
     public function getPicture(): ?string
     {
-        return $this->response['picture'] ?? null;
+        return $this->getStringValue('picture');
     }
 
     /**
      * Gets all user data as an array.
      *
-     * @return array All response data
+     * @return array<string, mixed> All response data
      */
     public function toArray(): array
     {
