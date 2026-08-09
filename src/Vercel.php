@@ -323,21 +323,31 @@ class Vercel extends AbstractProvider
      * Introspects a token to check its validity and metadata.
      *
      * @param string $token The token to introspect
-     * @return array The introspection result
+     * @return array<string, mixed> The introspection result
      * 
      * @throws IdentityProviderException If the request fails
      */
     public function introspectToken(string $token): array
     {
+        $introspectUrl = $this->introspectUrl
+            ?? throw new \RuntimeException("The 'introspectUrl' option was not configured.");
+
         $params = [
             'token' => $token,
         ];
 
-        $request = $this->createRequest(self::METHOD_POST, $this->introspectUrl, null, [
+        $request = $this->createRequest(self::METHOD_POST, $introspectUrl, null, [
             'body' => $this->buildQueryString($params)
         ]);
 
-        return $this->getParsedResponse($request);
+        $result = $this->getParsedResponse($request);
+
+        if (!is_array($result)) {
+            throw new \RuntimeException('Unexpected token introspection response format.');
+        }
+
+        /** @var array<string, mixed> $result */
+        return $result;
     }
 
     /**
@@ -350,11 +360,14 @@ class Vercel extends AbstractProvider
      */
     public function revokeToken(string $token): void
     {
+        $revokeUrl = $this->revokeUrl
+            ?? throw new \RuntimeException("The 'revokeUrl' option was not configured.");
+
         $credentials = base64_encode($this->clientId . ':' . $this->clientSecret);
 
         $request = $this->createRequest(
             self::METHOD_POST,
-            $this->revokeUrl,
+            $revokeUrl,
             null,
             [
                 'headers' => [
