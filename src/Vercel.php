@@ -108,8 +108,9 @@ class Vercel extends AbstractProvider
         ];
 
         foreach ($urlOptions as $option) {
-            if (!empty($this->options[$option])) {
-                $this->{$option} = $this->options[$option];
+            $value = $this->options[$option] ?? null;
+            if (is_string($value) && $value !== '') {
+                $this->{$option} = $value;
             }
         }
 
