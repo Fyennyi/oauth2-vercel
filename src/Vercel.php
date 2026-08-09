@@ -54,7 +54,7 @@ class Vercel extends AbstractProvider
     public ?string $jwksUrl = null;
 
     /**
-     * @var array Provider options
+     * @var array<string, mixed> Provider options
      */
     protected array $options = [];
 
@@ -72,7 +72,8 @@ class Vercel extends AbstractProvider
      *   - introspectUrl: Override introspection endpoint (optional)
      *   - revokeUrl: Override revocation endpoint (optional)
      *   - jwksUrl: Override JWKS endpoint (optional)
-     * @param array $collaborators Optional collaborators
+     * @param array<string, mixed> $options Configuration options
+     * @param array<string, mixed> $collaborators Optional collaborators
      * 
      * @throws \InvalidArgumentException If required options are missing
      */
