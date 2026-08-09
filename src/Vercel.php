@@ -138,23 +138,41 @@ class Vercel extends AbstractProvider
 
         try {
             $httpClient = $this->getHttpClient();
-            $response = $httpClient->get($wellKnownUrl);
+            $response = $httpClient->request('GET', $wellKnownUrl);
             $data = json_decode((string) $response->getBody(), true);
 
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new \RuntimeException('Failed to parse OIDC discovery document: ' . json_last_error_msg());
             }
 
-            $this->baseAuthorizationUrl = $data['authorization_endpoint'] ?? null;
-            $this->baseAccessTokenUrl = $data['token_endpoint'] ?? null;
-            $this->resourceOwnerDetailsUrl = $data['userinfo_endpoint'] ?? null;
-            $this->introspectUrl = $data['introspection_endpoint'] ?? null;
-            $this->revokeUrl = $data['revocation_endpoint'] ?? null;
-            $this->jwksUrl = $data['jwks_uri'] ?? null;
+            if (!is_array($data)) {
+                throw new \RuntimeException('Unexpected OIDC discovery document format.');
+            }
+
+            $this->baseAuthorizationUrl = $this->extractStringField($data, 'authorization_endpoint');
+            $this->baseAccessTokenUrl = $this->extractStringField($data, 'token_endpoint');
+            $this->resourceOwnerDetailsUrl = $this->extractStringField($data, 'userinfo_endpoint');
+            $this->introspectUrl = $this->extractStringField($data, 'introspection_endpoint');
+            $this->revokeUrl = $this->extractStringField($data, 'revocation_endpoint');
+            $this->jwksUrl = $this->extractStringField($data, 'jwks_uri');
 
         } catch (\Exception $e) {
             throw new \RuntimeException('Failed to discover OIDC endpoints: ' . $e->getMessage(), 0, $e);
         }
+    }
+
+    /**
+     * Extracts a string field from a decoded JSON array, if present.
+     *
+     * @param array<mixed, mixed> $data The decoded JSON data
+     * @param string $key The field name to extract
+     * @return string|null The string value, or null if missing/not a string
+     */
+    private function extractStringField(array $data, string $key): ?string
+    {
+        $value = $data[$key] ?? null;
+
+        return is_string($value) && $value !== '' ? $value : null;
     }
 
     /**
