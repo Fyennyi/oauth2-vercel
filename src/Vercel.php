@@ -13,10 +13,10 @@ use Psr\Http\Message\ResponseInterface;
 
 /**
  * Vercel OAuth 2.0 Provider for league/oauth2-client.
- * 
+ *
  * This provider implements the OAuth 2.0 and OpenID Connect flows for Vercel's
  * "Sign in with Vercel" authentication service.
- * 
+ *
  * @see https://vercel.com/docs/sign-in-with-vercel
  */
 class Vercel extends AbstractProvider
@@ -66,20 +66,19 @@ class Vercel extends AbstractProvider
     /**
      * Initializes the Vercel provider.
      *
-     * @param array $options Configuration options including:
-     *   - clientId: Your Vercel app client ID (required)
-     *   - clientSecret: Your Vercel app client secret (required)
-     *   - redirectUri: Your authorization callback URL (required)
-     *   - issuer: Vercel's issuer URL (optional, defaults to https://vercel.com)
-     *   - baseAuthorizationUrl: Override authorization endpoint (optional)
-     *   - baseAccessTokenUrl: Override token endpoint (optional)
-     *   - resourceOwnerDetailsUrl: Override userinfo endpoint (optional)
-     *   - introspectUrl: Override introspection endpoint (optional)
-     *   - revokeUrl: Override revocation endpoint (optional)
-     *   - jwksUrl: Override JWKS endpoint (optional)
-     * @param array<string, mixed> $options Configuration options
-     * @param array<string, mixed> $collaborators Optional collaborators
-     * 
+     * @param  array                     $options       Configuration options including:
+     *                                                  - clientId: Your Vercel app client ID (required)
+     *                                                  - clientSecret: Your Vercel app client secret (required)
+     *                                                  - redirectUri: Your authorization callback URL (required)
+     *                                                  - issuer: Vercel's issuer URL (optional, defaults to https://vercel.com)
+     *                                                  - baseAuthorizationUrl: Override authorization endpoint (optional)
+     *                                                  - baseAccessTokenUrl: Override token endpoint (optional)
+     *                                                  - resourceOwnerDetailsUrl: Override userinfo endpoint (optional)
+     *                                                  - introspectUrl: Override introspection endpoint (optional)
+     *                                                  - revokeUrl: Override revocation endpoint (optional)
+     *                                                  - jwksUrl: Override JWKS endpoint (optional)
+     * @param  array<string, mixed>      $options       Configuration options
+     * @param  array<string, mixed>      $collaborators Optional collaborators
      * @throws \InvalidArgumentException If required options are missing
      */
     public function __construct(array $options = [], array $collaborators = [])
@@ -89,7 +88,7 @@ class Vercel extends AbstractProvider
 
         // Set default issuer if not provided
         $issuer = $this->options['issuer'] ?? null;
-        if (is_string($issuer) && $issuer !== '') {
+        if (is_string($issuer) && '' !== $issuer) {
             $this->issuer = $issuer;
         }
         $this->options['issuer'] = $this->issuer;
@@ -109,7 +108,7 @@ class Vercel extends AbstractProvider
 
         foreach ($urlOptions as $option) {
             $value = $this->options[$option] ?? null;
-            if (is_string($value) && $value !== '') {
+            if (is_string($value) && '' !== $value) {
                 $this->{$option} = $value;
             }
         }
@@ -127,12 +126,11 @@ class Vercel extends AbstractProvider
     /**
      * Discovers OIDC endpoints from the issuer's .well-known configuration.
      *
-     * @param string $issuer The issuer URL
+     * @param  string            $issuer The issuer URL
      * @return void
-     * 
      * @throws \RuntimeException If discovery fails
      */
-    protected function discoverEndpoints(string $issuer): void
+    protected function discoverEndpoints(string $issuer) : void
     {
         $wellKnownUrl = rtrim($issuer, '/') . '/.well-known/openid-configuration';
 
@@ -141,11 +139,11 @@ class Vercel extends AbstractProvider
             $response = $httpClient->request('GET', $wellKnownUrl);
             $data = json_decode((string) $response->getBody(), true);
 
-            if (json_last_error() !== JSON_ERROR_NONE) {
+            if (JSON_ERROR_NONE !== json_last_error()) {
                 throw new \RuntimeException('Failed to parse OIDC discovery document: ' . json_last_error_msg());
             }
 
-            if (!is_array($data)) {
+            if (! is_array($data)) {
                 throw new \RuntimeException('Unexpected OIDC discovery document format.');
             }
 
@@ -164,34 +162,33 @@ class Vercel extends AbstractProvider
     /**
      * Extracts a string field from a decoded JSON array, if present.
      *
-     * @param array<mixed, mixed> $data The decoded JSON data
-     * @param string $key The field name to extract
-     * @return string|null The string value, or null if missing/not a string
+     * @param  array<mixed, mixed> $data The decoded JSON data
+     * @param  string              $key  The field name to extract
+     * @return string|null         The string value, or null if missing/not a string
      */
-    private function extractStringField(array $data, string $key): ?string
+    private function extractStringField(array $data, string $key) : ?string
     {
         $value = $data[$key] ?? null;
 
-        return is_string($value) && $value !== '' ? $value : null;
+        return is_string($value) && '' !== $value ? $value : null;
     }
 
     /**
      * Requests an access token and validates the ID token if present.
      *
-     * @param mixed $grant The grant type
-     * @param array<string, mixed> $options Additional options
-     * @return AccessTokenInterface The access token with validated ID token claims
-     * 
+     * @param  mixed                     $grant   The grant type
+     * @param  array<string, mixed>      $options Additional options
+     * @return AccessTokenInterface      The access token with validated ID token claims
      * @throws IdentityProviderException If ID token validation fails
      */
-    public function getAccessToken($grant, array $options = []): AccessTokenInterface
+    public function getAccessToken($grant, array $options = []) : AccessTokenInterface
     {
         $accessToken = parent::getAccessToken($grant, $options);
 
         // Validate ID token if present
         $idToken = $accessToken->getValues()['id_token'] ?? null;
 
-        if (is_string($idToken) && $idToken !== '') {
+        if (is_string($idToken) && '' !== $idToken) {
             $nonce = $_SESSION['oauth2nonce'] ?? null;
             unset($_SESSION['oauth2nonce']);
             $nonce = is_string($nonce) ? $nonce : null;
@@ -207,13 +204,12 @@ class Vercel extends AbstractProvider
     /**
      * Validates the ID token's signature and claims.
      *
-     * @param string $idToken The ID token JWT
-     * @param string|null $expectedNonce The expected nonce value
-     * @return array<string, mixed> The decoded and validated claims
-     * 
+     * @param  string                    $idToken       The ID token JWT
+     * @param  string|null               $expectedNonce The expected nonce value
+     * @return array<string, mixed>      The decoded and validated claims
      * @throws IdentityProviderException If validation fails
      */
-    private function getValidatedClaims(string $idToken, ?string $expectedNonce): array
+    private function getValidatedClaims(string $idToken, ?string $expectedNonce) : array
     {
         $jwks = $this->fetchJwks();
         $keys = JWK::parseKeySet($jwks);
@@ -228,12 +224,12 @@ class Vercel extends AbstractProvider
         // Validate audience
         $aud = is_array($decoded->aud) ? $decoded->aud : [$decoded->aud];
         $clientId = $this->options['clientId'] ?? null;
-        if (!in_array($clientId, $aud, true)) {
+        if (! in_array($clientId, $aud, true)) {
             throw new IdentityProviderException('Invalid audience claim in ID token', 0, $idToken);
         }
 
         // Validate nonce if provided
-        if ($expectedNonce !== null) {
+        if (null !== $expectedNonce) {
             if (empty($decoded->nonce)) {
                 throw new IdentityProviderException('ID token is missing nonce claim', 0, $idToken);
             }
@@ -250,21 +246,20 @@ class Vercel extends AbstractProvider
      * Fetches the JSON Web Key Set (JWKS) from Vercel.
      *
      * @return array<string, mixed> The JWKS data
-     * 
-     * @throws \RuntimeException If fetching fails
+     * @throws \RuntimeException    If fetching fails
      */
-    private function fetchJwks(): array
+    private function fetchJwks() : array
     {
         $jwksUrl = $this->jwksUrl ?? throw new \RuntimeException("The 'jwksUrl' option was not configured.");
 
         $response = $this->getHttpClient()->request('GET', $jwksUrl);
         $data = json_decode((string) $response->getBody(), true);
 
-        if (json_last_error() !== JSON_ERROR_NONE) {
+        if (JSON_ERROR_NONE !== json_last_error()) {
             throw new \RuntimeException('Failed to parse JWKS: ' . json_last_error_msg());
         }
 
-        if (!is_array($data)) {
+        if (! is_array($data)) {
             throw new \RuntimeException('Unexpected JWKS response format.');
         }
 
@@ -277,7 +272,7 @@ class Vercel extends AbstractProvider
      *
      * @return string The issuer URL
      */
-    private function getConfiguredIssuer(): string
+    private function getConfiguredIssuer() : string
     {
         return $this->issuer;
     }
@@ -285,7 +280,7 @@ class Vercel extends AbstractProvider
     /**
      * {@inheritdoc}
      */
-    public function getBaseAuthorizationUrl(): string
+    public function getBaseAuthorizationUrl() : string
     {
         return $this->baseAuthorizationUrl
             ?? throw new \RuntimeException("The 'baseAuthorizationUrl' option was not configured.");
@@ -296,7 +291,7 @@ class Vercel extends AbstractProvider
      *
      * @param array<string, mixed> $params
      */
-    public function getBaseAccessTokenUrl(array $params): string
+    public function getBaseAccessTokenUrl(array $params) : string
     {
         return $this->baseAccessTokenUrl
             ?? throw new \RuntimeException("The 'baseAccessTokenUrl' option was not configured.");
@@ -305,7 +300,7 @@ class Vercel extends AbstractProvider
     /**
      * {@inheritdoc}
      */
-    public function getResourceOwnerDetailsUrl(AccessToken $token): string
+    public function getResourceOwnerDetailsUrl(AccessToken $token) : string
     {
         return $this->resourceOwnerDetailsUrl
             ?? throw new \RuntimeException("The 'resourceOwnerDetailsUrl' option was not configured.");
@@ -314,7 +309,7 @@ class Vercel extends AbstractProvider
     /**
      * {@inheritdoc}
      */
-    protected function getPkceMethod(): string
+    protected function getPkceMethod() : string
     {
         return 'S256';
     }
@@ -322,12 +317,11 @@ class Vercel extends AbstractProvider
     /**
      * Introspects a token to check its validity and metadata.
      *
-     * @param string $token The token to introspect
-     * @return array<string, mixed> The introspection result
-     * 
+     * @param  string                    $token The token to introspect
+     * @return array<string, mixed>      The introspection result
      * @throws IdentityProviderException If the request fails
      */
-    public function introspectToken(string $token): array
+    public function introspectToken(string $token) : array
     {
         $introspectUrl = $this->introspectUrl
             ?? throw new \RuntimeException("The 'introspectUrl' option was not configured.");
@@ -342,7 +336,7 @@ class Vercel extends AbstractProvider
 
         $result = $this->getParsedResponse($request);
 
-        if (!is_array($result)) {
+        if (! is_array($result)) {
             throw new \RuntimeException('Unexpected token introspection response format.');
         }
 
@@ -353,12 +347,11 @@ class Vercel extends AbstractProvider
     /**
      * Revokes a token (access or refresh token).
      *
-     * @param string $token The token to revoke
+     * @param  string                    $token The token to revoke
      * @return void
-     * 
      * @throws IdentityProviderException If the request fails
      */
-    public function revokeToken(string $token): void
+    public function revokeToken(string $token) : void
     {
         $revokeUrl = $this->revokeUrl
             ?? throw new \RuntimeException("The 'revokeUrl' option was not configured.");
@@ -385,7 +378,7 @@ class Vercel extends AbstractProvider
      *
      * @return array<int, string>
      */
-    protected function getDefaultScopes(): array
+    protected function getDefaultScopes() : array
     {
         return ['openid', 'email', 'profile'];
     }
@@ -393,7 +386,7 @@ class Vercel extends AbstractProvider
     /**
      * {@inheritdoc}
      */
-    protected function getScopeSeparator(): string
+    protected function getScopeSeparator() : string
     {
         return ' ';
     }
@@ -403,9 +396,9 @@ class Vercel extends AbstractProvider
      *
      * @param array<string, mixed>|string $data
      */
-    protected function checkResponse(ResponseInterface $response, $data): void
+    protected function checkResponse(ResponseInterface $response, $data) : void
     {
-        if (is_array($data) && !empty($data['error'])) {
+        if (is_array($data) && ! empty($data['error'])) {
             $code = $response->getStatusCode();
             $error = $data['error_description'] ?? $data['error'];
             $error = is_string($error) ? $error : 'An unknown error occurred';
@@ -418,7 +411,7 @@ class Vercel extends AbstractProvider
      *
      * @param array<string, mixed> $response
      */
-    protected function createResourceOwner(array $response, AccessToken $token): VercelUser
+    protected function createResourceOwner(array $response, AccessToken $token) : VercelUser
     {
         return new VercelUser($response);
     }

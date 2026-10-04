@@ -6,7 +6,7 @@ use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 
 /**
  * Represents a Vercel user resource owner.
- * 
+ *
  * This class contains user information returned from Vercel's userinfo endpoint
  * and ID token claims.
  */
@@ -30,10 +30,10 @@ class VercelUser implements ResourceOwnerInterface
     /**
      * Extracts a string value from the response data, if present.
      *
-     * @param string $key The field name to extract
+     * @param  string      $key The field name to extract
      * @return string|null The string value, or null if missing/not a string
      */
-    private function getStringValue(string $key): ?string
+    private function getStringValue(string $key) : ?string
     {
         $value = $this->response[$key] ?? null;
 
@@ -45,7 +45,7 @@ class VercelUser implements ResourceOwnerInterface
      *
      * @return string|null The user ID
      */
-    public function getId(): ?string
+    public function getId() : ?string
     {
         return $this->getStringValue('sub');
     }
@@ -55,7 +55,7 @@ class VercelUser implements ResourceOwnerInterface
      *
      * @return string|null The email address
      */
-    public function getEmail(): ?string
+    public function getEmail() : ?string
     {
         return $this->getStringValue('email');
     }
@@ -65,7 +65,7 @@ class VercelUser implements ResourceOwnerInterface
      *
      * @return bool|null True if verified, false if not, null if unknown
      */
-    public function isEmailVerified(): ?bool
+    public function isEmailVerified() : ?bool
     {
         $value = $this->response['email_verified'] ?? null;
 
@@ -77,7 +77,7 @@ class VercelUser implements ResourceOwnerInterface
      *
      * @return string|null The full name
      */
-    public function getName(): ?string
+    public function getName() : ?string
     {
         return $this->getStringValue('name');
     }
@@ -87,7 +87,7 @@ class VercelUser implements ResourceOwnerInterface
      *
      * @return string|null The username
      */
-    public function getPreferredUsername(): ?string
+    public function getPreferredUsername() : ?string
     {
         return $this->getStringValue('preferred_username');
     }
@@ -97,7 +97,7 @@ class VercelUser implements ResourceOwnerInterface
      *
      * @return string|null The picture URL
      */
-    public function getPicture(): ?string
+    public function getPicture() : ?string
     {
         return $this->getStringValue('picture');
     }
@@ -107,7 +107,7 @@ class VercelUser implements ResourceOwnerInterface
      *
      * @return array<string, mixed> All response data
      */
-    public function toArray(): array
+    public function toArray() : array
     {
         return $this->response;
     }
