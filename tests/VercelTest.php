@@ -5,11 +5,10 @@ namespace Fyennyi\OAuth2\Client\Provider\Tests;
 use Firebase\JWT\JWT;
 use Fyennyi\OAuth2\Client\Provider\Vercel;
 use Fyennyi\OAuth2\Client\Provider\VercelUser;
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Response;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 use PHPUnit\Framework\TestCase;
@@ -19,7 +18,7 @@ class VercelTest extends TestCase
     protected Vercel $provider;
     protected array $options;
 
-    protected function setUp(): void
+    protected function setUp() : void
     {
         $this->options = [
             'clientId' => 'mock_client_id',
@@ -49,7 +48,7 @@ class VercelTest extends TestCase
         return new Client(['handler' => $handlerStack]);
     }
 
-    public function testAuthorizationUrl(): void
+    public function testAuthorizationUrl() : void
     {
         $url = $this->provider->getAuthorizationUrl();
         $uri = parse_url($url);
@@ -71,63 +70,63 @@ class VercelTest extends TestCase
         $this->assertEquals('S256', $query['code_challenge_method']);
     }
 
-    public function testGetBaseAuthorizationUrl(): void
+    public function testGetBaseAuthorizationUrl() : void
     {
         $url = $this->provider->getBaseAuthorizationUrl();
         $this->assertEquals('https://vercel.com/oauth/authorize', $url);
     }
 
-    public function testGetBaseAuthorizationUrlThrowsWhenMissing(): void
+    public function testGetBaseAuthorizationUrlThrowsWhenMissing() : void
     {
         $this->expectException(\RuntimeException::class);
-        
+
         $provider = $this->getMockBuilder(Vercel::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['discoverEndpoints'])
             ->getMock();
-            
+
         $provider->getBaseAuthorizationUrl();
     }
 
-    public function testGetBaseAccessTokenUrl(): void
+    public function testGetBaseAccessTokenUrl() : void
     {
         $url = $this->provider->getBaseAccessTokenUrl([]);
         $this->assertEquals('https://api.vercel.com/login/oauth/token', $url);
     }
-    
-    public function testGetBaseAccessTokenUrlThrowsWhenMissing(): void
+
+    public function testGetBaseAccessTokenUrlThrowsWhenMissing() : void
     {
         $this->expectException(\RuntimeException::class);
-        
+
         $provider = $this->getMockBuilder(Vercel::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['discoverEndpoints'])
             ->getMock();
-            
+
         $provider->getBaseAccessTokenUrl([]);
     }
 
-    public function testGetResourceOwnerDetailsUrl(): void
+    public function testGetResourceOwnerDetailsUrl() : void
     {
         $token = new AccessToken(['access_token' => 'mock_token']);
         $url = $this->provider->getResourceOwnerDetailsUrl($token);
         $this->assertEquals('https://api.vercel.com/login/oauth/userinfo', $url);
     }
 
-    public function testGetResourceOwnerDetailsUrlThrowsWhenMissing(): void
+    public function testGetResourceOwnerDetailsUrlThrowsWhenMissing() : void
     {
         $this->expectException(\RuntimeException::class);
-        
+
         $provider = $this->getMockBuilder(Vercel::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['discoverEndpoints'])
             ->getMock();
-            
+
         $token = new AccessToken(['access_token' => 'mock_token']);
         $provider->getResourceOwnerDetailsUrl($token);
     }
 
-    public function testDefaultScopes(): void
+    public function testDefaultScopes() : void
     {
         $url = $this->provider->getAuthorizationUrl();
         $query = parse_url($url, PHP_URL_QUERY);
@@ -138,46 +137,46 @@ class VercelTest extends TestCase
         $this->assertStringContainsString('profile', $params['scope']);
     }
 
-    public function testCheckResponseThrowsException(): void
+    public function testCheckResponseThrowsException() : void
     {
         $this->expectException(IdentityProviderException::class);
         $this->expectExceptionMessage('Invalid request');
 
         $response = $this->mockResponse(json_encode(['error' => 'Invalid request']), 400);
-        
+
         $reflection = new \ReflectionClass(Vercel::class);
         $method = $reflection->getMethod('checkResponse');
         $method->setAccessible(true);
         $method->invokeArgs($this->provider, [$response, ['error' => 'invalid_request', 'error_description' => 'Invalid request']]);
     }
-    
-    public function testCheckResponseThrowsExceptionFallbackMessage(): void
+
+    public function testCheckResponseThrowsExceptionFallbackMessage() : void
     {
         $this->expectException(IdentityProviderException::class);
         $this->expectExceptionMessage('invalid_request');
 
         $response = $this->mockResponse(json_encode(['error' => 'invalid_request']), 400);
-        
+
         $reflection = new \ReflectionClass(Vercel::class);
         $method = $reflection->getMethod('checkResponse');
         $method->setAccessible(true);
         $method->invokeArgs($this->provider, [$response, ['error' => 'invalid_request']]);
     }
 
-    public function testCheckResponseThrowsExceptionFallbackUnknownMessage(): void
+    public function testCheckResponseThrowsExceptionFallbackUnknownMessage() : void
     {
         $this->expectException(IdentityProviderException::class);
         $this->expectExceptionMessage('An unknown error occurred');
 
         $response = $this->mockResponse(json_encode(['error' => ['nested']]), 400);
-        
+
         $reflection = new \ReflectionClass(Vercel::class);
         $method = $reflection->getMethod('checkResponse');
         $method->setAccessible(true);
         $method->invokeArgs($this->provider, [$response, ['error' => ['nested']]]);
     }
 
-    public function testCreateResourceOwner(): void
+    public function testCreateResourceOwner() : void
     {
         $response = [
             'sub' => '123456',
@@ -188,14 +187,14 @@ class VercelTest extends TestCase
         $reflection = new \ReflectionClass(Vercel::class);
         $method = $reflection->getMethod('createResourceOwner');
         $method->setAccessible(true);
-        
+
         $user = $method->invokeArgs($this->provider, [$response, $token]);
 
         $this->assertInstanceOf(VercelUser::class, $user);
         $this->assertEquals('123456', $user->getId());
     }
 
-    public function testIntrospectToken(): void
+    public function testIntrospectToken() : void
     {
         $client = $this->mockClient($this->mockResponse(json_encode([
             'active' => true,
@@ -208,8 +207,8 @@ class VercelTest extends TestCase
         $this->assertIsArray($result);
         $this->assertTrue($result['active']);
     }
-    
-    public function testIntrospectTokenThrowsOnInvalidFormat(): void
+
+    public function testIntrospectTokenThrowsOnInvalidFormat() : void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Unexpected token introspection response format.');
@@ -220,10 +219,10 @@ class VercelTest extends TestCase
         $this->provider->introspectToken('mock_token');
     }
 
-    public function testIntrospectTokenThrowsOnMissingUrl(): void
+    public function testIntrospectTokenThrowsOnMissingUrl() : void
     {
         $this->expectException(\RuntimeException::class);
-        
+
         $provider = $this->getMockBuilder(Vercel::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['discoverEndpoints'])
@@ -232,7 +231,7 @@ class VercelTest extends TestCase
         $provider->introspectToken('mock_token');
     }
 
-    public function testRevokeToken(): void
+    public function testRevokeToken() : void
     {
         $client = $this->mockClient($this->mockResponse('', 200));
         $this->provider->setHttpClient($client);
@@ -240,11 +239,11 @@ class VercelTest extends TestCase
         $this->provider->revokeToken('mock_token');
         $this->assertTrue(true);
     }
-    
-    public function testRevokeTokenThrowsOnMissingUrl(): void
+
+    public function testRevokeTokenThrowsOnMissingUrl() : void
     {
         $this->expectException(\RuntimeException::class);
-        
+
         $provider = $this->getMockBuilder(Vercel::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['discoverEndpoints'])
@@ -252,14 +251,14 @@ class VercelTest extends TestCase
 
         $provider->revokeToken('mock_token');
     }
-    
-    public function testDiscoverEndpointsSuccess(): void
+
+    public function testDiscoverEndpointsSuccess() : void
     {
         $provider = $this->getMockBuilder(Vercel::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getHttpClient'])
             ->getMock();
-            
+
         $mockDiscovery = [
             'authorization_endpoint' => 'https://vercel.com/auth',
             'token_endpoint' => 'https://api.vercel.com/token',
@@ -268,15 +267,15 @@ class VercelTest extends TestCase
             'revocation_endpoint' => 'https://api.vercel.com/revoke',
             'jwks_uri' => 'https://vercel.com/jwks'
         ];
-        
+
         $client = $this->mockClient($this->mockResponse(json_encode($mockDiscovery), 200, ['content-type' => 'application/json']));
         $provider->method('getHttpClient')->willReturn($client);
-        
+
         $reflection = new \ReflectionClass(Vercel::class);
         $method = $reflection->getMethod('discoverEndpoints');
         $method->setAccessible(true);
         $method->invokeArgs($provider, ['https://vercel.com']);
-        
+
         $this->assertEquals('https://vercel.com/auth', $provider->baseAuthorizationUrl);
         $this->assertEquals('https://api.vercel.com/token', $provider->baseAccessTokenUrl);
         $this->assertEquals('https://api.vercel.com/userinfo', $provider->resourceOwnerDetailsUrl);
@@ -284,88 +283,92 @@ class VercelTest extends TestCase
         $this->assertEquals('https://api.vercel.com/revoke', $provider->revokeUrl);
         $this->assertEquals('https://vercel.com/jwks', $provider->jwksUrl);
     }
-    
-    public function testDiscoverEndpointsThrowsOnJsonError(): void
+
+    public function testDiscoverEndpointsThrowsOnJsonError() : void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Failed to discover OIDC endpoints: Failed to parse OIDC discovery document');
-        
+
         $provider = $this->getMockBuilder(Vercel::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getHttpClient'])
             ->getMock();
-            
+
         $client = $this->mockClient($this->mockResponse('invalid json', 200, ['content-type' => 'application/json']));
         $provider->method('getHttpClient')->willReturn($client);
-        
+
         $reflection = new \ReflectionClass(Vercel::class);
         $method = $reflection->getMethod('discoverEndpoints');
         $method->setAccessible(true);
         $method->invokeArgs($provider, ['https://vercel.com']);
     }
 
-    public function testDiscoverEndpointsThrowsOnNonArray(): void
+    public function testDiscoverEndpointsThrowsOnNonArray() : void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Unexpected OIDC discovery document format');
-        
+
         $provider = $this->getMockBuilder(Vercel::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getHttpClient'])
             ->getMock();
-            
+
         $client = $this->mockClient($this->mockResponse('"string"', 200, ['content-type' => 'application/json']));
         $provider->method('getHttpClient')->willReturn($client);
-        
+
         $reflection = new \ReflectionClass(Vercel::class);
         $method = $reflection->getMethod('discoverEndpoints');
         $method->setAccessible(true);
         $method->invokeArgs($provider, ['https://vercel.com']);
     }
-    
-    public function testConstructorThrowsWhenEndpointsNotDiscovered(): void
+
+    public function testConstructorThrowsWhenEndpointsNotDiscovered() : void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("The 'baseAuthorizationUrl' option is required");
-        
+
         $mock = new MockHandler([
             new Response(200, [], '{}')
         ]);
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(['handler' => $handlerStack]);
-        
-        $providerClass = new class(['clientId' => 'c', 'clientSecret' => 's', 'redirectUri' => 'r'], $client) extends Vercel {
+
+        $providerClass = new class (['clientId' => 'c', 'clientSecret' => 's', 'redirectUri' => 'r'], $client) extends Vercel {
             private $mockClient;
-            public function __construct($options, $mockClient) {
+            public function __construct($options, $mockClient)
+            {
                 $this->mockClient = $mockClient;
                 parent::__construct($options);
             }
-            public function getHttpClient() {
+            public function getHttpClient()
+            {
                 return $this->mockClient;
             }
         };
     }
-    
-    public function testConstructorAcceptsCustomIssuer(): void
+
+    public function testConstructorAcceptsCustomIssuer() : void
     {
-        $providerClass = new class([
+        $providerClass = new class ([
             'clientId' => 'c', 'clientSecret' => 's', 'redirectUri' => 'r', 'issuer' => 'https://custom.com',
             'baseAuthorizationUrl' => 'url', 'baseAccessTokenUrl' => 'url',
             'resourceOwnerDetailsUrl' => 'url', 'introspectUrl' => 'url',
             'revokeUrl' => 'url', 'jwksUrl' => 'url'
         ]) extends Vercel {
-            protected function discoverEndpoints(string $issuer) : void {
+            protected function discoverEndpoints(string $issuer) : void
+            {
                 // Do nothing
             }
-            public function getIssuer() {
+            public function getIssuer()
+            {
                 return $this->issuer;
             }
         };
-        
+
         $this->assertEquals('https://custom.com', $providerClass->getIssuer());
     }
 
-    public function testGetAccessTokenWithValidIdToken(): void
+    public function testGetAccessTokenWithValidIdToken() : void
     {
         $key = openssl_pkey_new([
             'private_key_bits' => 2048,
@@ -373,10 +376,10 @@ class VercelTest extends TestCase
         ]);
         openssl_pkey_export($key, $privateKey);
         $details = openssl_pkey_get_details($key);
-        
+
         $n = strtr(rtrim(base64_encode($details['rsa']['n']), '='), '+/', '-_');
         $e = strtr(rtrim(base64_encode($details['rsa']['e']), '='), '+/', '-_');
-        
+
         $jwks = [
             'keys' => [
                 [
@@ -396,42 +399,42 @@ class VercelTest extends TestCase
             'sub' => '12345',
             'nonce' => 'expected_nonce'
         ];
-        
+
         $idToken = JWT::encode($payload, $privateKey, 'RS256', 'test_kid');
-        
+
         $tokenResponse = [
             'access_token' => 'mock_access_token',
             'token_type' => 'Bearer',
             'expires_in' => 3600,
             'id_token' => $idToken
         ];
-        
+
         $mock = new MockHandler([
             new Response(200, ['content-type' => 'application/json'], json_encode($tokenResponse)),
             new Response(200, ['content-type' => 'application/json'], json_encode($jwks))
         ]);
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(['handler' => $handlerStack]);
-        
+
         $this->provider->setHttpClient($client);
-        
+
         $_SESSION['oauth2nonce'] = 'expected_nonce';
-        
+
         $token = $this->provider->getAccessToken('authorization_code', ['code' => 'mock_code']);
-        
+
         $this->assertInstanceOf(AccessToken::class, $token);
         $values = $token->getValues();
         $this->assertArrayHasKey('id_token_claims', $values);
         $this->assertEquals('12345', $values['id_token_claims']['sub']);
-        
+
         unset($_SESSION['oauth2nonce']);
     }
 
-    public function testGetValidatedClaimsThrowsOnInvalidIssuer(): void
+    public function testGetValidatedClaimsThrowsOnInvalidIssuer() : void
     {
         $this->expectException(IdentityProviderException::class);
         $this->expectExceptionMessage('Invalid issuer claim in ID token');
-        
+
         $key = openssl_pkey_new(['private_key_bits' => 2048, 'private_key_type' => OPENSSL_KEYTYPE_RSA]);
         openssl_pkey_export($key, $privateKey);
         $details = openssl_pkey_get_details($key);
@@ -451,11 +454,11 @@ class VercelTest extends TestCase
         $method->invokeArgs($this->provider, [$idToken, null]);
     }
 
-    public function testGetValidatedClaimsThrowsOnInvalidAudience(): void
+    public function testGetValidatedClaimsThrowsOnInvalidAudience() : void
     {
         $this->expectException(IdentityProviderException::class);
         $this->expectExceptionMessage('Invalid audience claim in ID token');
-        
+
         $key = openssl_pkey_new(['private_key_bits' => 2048, 'private_key_type' => OPENSSL_KEYTYPE_RSA]);
         openssl_pkey_export($key, $privateKey);
         $details = openssl_pkey_get_details($key);
@@ -475,11 +478,11 @@ class VercelTest extends TestCase
         $method->invokeArgs($this->provider, [$idToken, null]);
     }
 
-    public function testGetValidatedClaimsThrowsOnMissingNonce(): void
+    public function testGetValidatedClaimsThrowsOnMissingNonce() : void
     {
         $this->expectException(IdentityProviderException::class);
         $this->expectExceptionMessage('ID token is missing nonce claim');
-        
+
         $key = openssl_pkey_new(['private_key_bits' => 2048, 'private_key_type' => OPENSSL_KEYTYPE_RSA]);
         openssl_pkey_export($key, $privateKey);
         $details = openssl_pkey_get_details($key);
@@ -499,11 +502,11 @@ class VercelTest extends TestCase
         $method->invokeArgs($this->provider, [$idToken, 'expected_nonce']);
     }
 
-    public function testGetValidatedClaimsThrowsOnInvalidNonce(): void
+    public function testGetValidatedClaimsThrowsOnInvalidNonce() : void
     {
         $this->expectException(IdentityProviderException::class);
         $this->expectExceptionMessage('Invalid nonce in ID token');
-        
+
         $key = openssl_pkey_new(['private_key_bits' => 2048, 'private_key_type' => OPENSSL_KEYTYPE_RSA]);
         openssl_pkey_export($key, $privateKey);
         $details = openssl_pkey_get_details($key);
@@ -523,26 +526,26 @@ class VercelTest extends TestCase
         $method->invokeArgs($this->provider, [$idToken, 'expected_nonce']);
     }
 
-    public function testFetchJwksThrowsOnMissingUrl(): void
+    public function testFetchJwksThrowsOnMissingUrl() : void
     {
         $this->expectException(\RuntimeException::class);
-        
+
         $provider = $this->getMockBuilder(Vercel::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['discoverEndpoints'])
             ->getMock();
-            
+
         $reflection = new \ReflectionClass(Vercel::class);
         $method = $reflection->getMethod('fetchJwks');
         $method->setAccessible(true);
         $method->invokeArgs($provider, []);
     }
 
-    public function testFetchJwksThrowsOnJsonError(): void
+    public function testFetchJwksThrowsOnJsonError() : void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Failed to parse JWKS');
-        
+
         $client = $this->mockClient($this->mockResponse('invalid json', 200));
         $this->provider->setHttpClient($client);
 
@@ -552,11 +555,11 @@ class VercelTest extends TestCase
         $method->invokeArgs($this->provider, []);
     }
 
-    public function testFetchJwksThrowsOnNonArray(): void
+    public function testFetchJwksThrowsOnNonArray() : void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Unexpected JWKS response format.');
-        
+
         $client = $this->mockClient($this->mockResponse('"string"', 200));
         $this->provider->setHttpClient($client);
 
