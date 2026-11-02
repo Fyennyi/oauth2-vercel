@@ -26,7 +26,7 @@
         "friendsofphp/php-cs-fixer": "^3.95",
         "mockery/mockery": "^1.4",
         "phpstan/phpstan": "^2.1",
-        "phpunit/phpunit": "^9.5 || ^10.0",
+        "phpunit/phpunit": "^13.4.5",
         "squizlabs/php_codesniffer": "^4.0"
     },
     "autoload": {
